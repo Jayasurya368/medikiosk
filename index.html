@@ -433,11 +433,11 @@ table.med-table td { padding: 9px 10px; border-bottom: 1px solid var(--line); fo
     </div>
 
     <div class="patient-card">
-      <div class="patient-name">Rekha Sharma</div>
-      <div class="meta-row"><span class="meta-k">Age / Sex</span><span class="meta-v">52, Female</span></div>
-      <div class="meta-row"><span class="meta-k">ABHA ID</span><span class="meta-v">14-2201-8890-4471</span></div>
-      <div class="meta-row"><span class="meta-k">Token</span><span class="meta-v">OPD-0231</span></div>
-      <div class="meta-row"><span class="meta-k">Department</span><span class="meta-v">General Medicine</span></div>
+      <div class="patient-name">No active patient</div>
+      <div class="meta-row"><span class="meta-k">Age / Sex</span><span class="meta-v">—</span></div>
+      <div class="meta-row"><span class="meta-k">ABHA ID</span><span class="meta-v">—</span></div>
+      <div class="meta-row"><span class="meta-k">Token</span><span class="meta-v">—</span></div>
+      <div class="meta-row"><span class="meta-k">Department</span><span class="meta-v">—</span></div>
     </div>
 
     <nav class="nav-list">
@@ -489,15 +489,15 @@ table.med-table td { padding: 9px 10px; border-bottom: 1px solid var(--line); fo
     <!-- ============ DASHBOARD ============ -->
     <section id="dashboard" class="view active">
       <div class="hero">
-        <div class="hero-title">128 patients arrived today with their story already told.</div>
+        <div class="hero-title">Patients arrive with their story already told.</div>
         <p class="hero-sub">History, prior records, and Ayurvedic assessment are captured at the kiosk — before anyone reaches the consultation room.</p>
       </div>
 
       <div class="stat-strip">
-        <div class="stat-seg"><div class="stat-num">128</div><div class="stat-label">Patients screened today</div></div>
-        <div class="stat-seg"><div class="stat-num">6.2 min</div><div class="stat-label">Avg. history time saved</div></div>
-        <div class="stat-seg"><div class="stat-num">3</div><div class="stat-label">Red-flag alerts today</div></div>
-        <div class="stat-seg"><div class="stat-num">94</div><div class="stat-label">Documents digitized today</div></div>
+        <div class="stat-seg"><div class="stat-num">0</div><div class="stat-label">Patients screened today</div></div>
+        <div class="stat-seg"><div class="stat-num">—</div><div class="stat-label">Avg. history time saved</div></div>
+        <div class="stat-seg"><div class="stat-num">0</div><div class="stat-label">Red-flag alerts today</div></div>
+        <div class="stat-seg"><div class="stat-num">0</div><div class="stat-label">Documents digitized today</div></div>
       </div>
 
       <div class="section-label">Dr. Mehta's queue</div>
@@ -507,39 +507,7 @@ table.med-table td { padding: 9px 10px; border-bottom: 1px solid var(--line); fo
           <thead><tr><th>Token</th><th>Patient</th><th>Chief complaint</th><th>Case-taking</th><th></th></tr></thead>
           <tbody>
             <tr>
-              <td class="token-cell">OPD-0231</td>
-              <td class="patient-cell">Rekha Sharma</td>
-              <td>Chest pain</td>
-              <td><span class="status-pill status-complete">Complete</span></td>
-              <td><button class="btn btn-outline btn-sm" onclick="switchView('diagnosis')">Open</button></td>
-            </tr>
-            <tr>
-              <td class="token-cell">OPD-0232</td>
-              <td class="patient-cell">Mohammed Iqbal</td>
-              <td>Fever, joint pain</td>
-              <td><span class="status-pill status-progress">In progress</span></td>
-              <td><button class="btn btn-ghost btn-sm" disabled>Open</button></td>
-            </tr>
-            <tr>
-              <td class="token-cell">OPD-0233</td>
-              <td class="patient-cell">Lakshmi Nair</td>
-              <td>Ayurvedic wellness consult</td>
-              <td><span class="status-pill status-complete">Complete</span></td>
-              <td><button class="btn btn-outline btn-sm" onclick="switchView('ayurveda')">Open</button></td>
-            </tr>
-            <tr>
-              <td class="token-cell">OPD-0234</td>
-              <td class="patient-cell">Arjun Patil</td>
-              <td>Abdominal pain</td>
-              <td><span class="status-pill status-await">Awaiting</span></td>
-              <td><button class="btn btn-ghost btn-sm" disabled>Open</button></td>
-            </tr>
-            <tr>
-              <td class="token-cell">OPD-0235</td>
-              <td class="patient-cell">Fatima Sheikh</td>
-              <td>Follow-up — diabetes</td>
-              <td><span class="status-pill status-complete">Complete</span></td>
-              <td><button class="btn btn-outline btn-sm" onclick="switchView('followup')">Open</button></td>
+              <td colspan="5" style="text-align:center;color:var(--ink-faint);padding:28px 12px;">No patients in queue yet</td>
             </tr>
           </tbody>
         </table>
@@ -910,11 +878,7 @@ table.med-table td { padding: 9px 10px; border-bottom: 1px solid var(--line); fo
         <table class="queue-table">
           <thead><tr><th>Patient</th><th>Next follow-up</th><th>Reason</th><th>Status</th><th>Reminder</th></tr></thead>
           <tbody id="followupTableBody">
-            <tr><td class="patient-cell">Rekha Sharma</td><td>21 Sep 2026</td><td>Chest pain reassessment</td><td><span class="status-pill status-scheduled">Scheduled</span></td><td>Sent</td></tr>
-            <tr><td class="patient-cell">Fatima Sheikh</td><td>12 Sep 2026</td><td>Diabetes review</td><td><span class="status-pill status-duesoon">Due soon</span></td><td>Sent</td></tr>
-            <tr><td class="patient-cell">Arjun Patil</td><td>04 Sep 2026</td><td>Abdominal pain follow-up</td><td><span class="status-pill status-duetoday">Due today</span></td><td>Pending</td></tr>
-            <tr><td class="patient-cell">Suresh Yadav</td><td>28 Aug 2026</td><td>Post-Panchakarma review</td><td><span class="status-pill status-overdue">Overdue</span></td><td>Sent</td></tr>
-            <tr><td class="patient-cell">Mohammed Iqbal</td><td>30 Aug 2026</td><td>Joint pain review</td><td><span class="status-pill status-complete">Completed</span></td><td>Sent</td></tr>
+            <tr><td colspan="5" style="text-align:center;color:var(--ink-faint);padding:28px 12px;">No follow-ups scheduled yet</td></tr>
           </tbody>
         </table>
         </div>
@@ -922,15 +886,14 @@ table.med-table td { padding: 9px 10px; border-bottom: 1px solid var(--line); fo
 
       <div class="grid-2col" style="margin-top:20px;">
         <div class="panel">
-          <div class="panel-title">Outcome trend — Rekha Sharma</div>
-          <p class="panel-sub" style="margin-bottom:6px;">Self-reported pain severity, 0–10, across visits</p>
+          <div class="panel-title">Outcome trend</div>
+          <p class="panel-sub" style="margin-bottom:6px;">Select a patient above to view their outcome trend</p>
           <svg id="trendChart" viewBox="0 0 640 220" style="width:100%;height:auto;margin-top:8px;"></svg>
-          <div class="trend-stat">↓ 75% reduction in reported pain severity since the first visit</div>
         </div>
         <div class="panel">
-          <div class="panel-title">Medication adherence — Rekha Sharma</div>
-          <div class="adherence-track"><div class="adherence-fill" style="width:86%;"></div></div>
-          <div class="adherence-label"><span>Last 60 days</span><span>86%</span></div>
+          <div class="panel-title">Medication adherence</div>
+          <div class="adherence-track"><div class="adherence-fill" style="width:0%;"></div></div>
+          <div class="adherence-label"><span>Last 60 days</span><span>—</span></div>
           <p class="panel-sub" style="margin-top:12px;">Based on refill tracking and patient-reported check-ins</p>
         </div>
       </div>
@@ -941,11 +904,7 @@ table.med-table td { padding: 9px 10px; border-bottom: 1px solid var(--line); fo
           <div class="field-group">
             <label class="f-label">Patient</label>
             <select id="fuPatient">
-              <option>Rekha Sharma</option>
-              <option>Mohammed Iqbal</option>
-              <option>Lakshmi Nair</option>
-              <option>Arjun Patil</option>
-              <option>Fatima Sheikh</option>
+              <option value="">Select a patient…</option>
             </select>
           </div>
           <div class="field-group">
@@ -1331,12 +1290,14 @@ function scheduleFollowup() {
   const date = dateInput.value;
   const reason = reasonInput.value.trim();
 
-  if (!date || !reason) {
-    showToast("Please add a date and reason before scheduling.", "danger");
+  if (!patient || !date || !reason) {
+    showToast("Please select a patient, date, and reason before scheduling.", "danger");
     return;
   }
 
   const tbody = document.getElementById("followupTableBody");
+  const emptyState = tbody.querySelector("td[colspan]");
+  if (emptyState) emptyState.closest("tr").remove();
   const row = document.createElement("tr");
 
   const tdPatient = document.createElement("td");
@@ -1558,7 +1519,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderHorizontalBars(document.getElementById("languageChart"), languageData);
   renderHorizontalBars(document.getElementById("impactChart"), impactData, { max: 3.5 });
   renderDonut(document.getElementById("dxDonut"), document.getElementById("dxLegend"), diagnosisData);
-  renderLineChart(document.getElementById("trendChart"), [8, 6, 5, 3, 2], ["12 Jun", "26 Jun", "10 Jul", "24 Jul", "07 Aug"], { min: 0, max: 10 });
+
 });
 </script>
 </body>
