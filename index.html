@@ -231,10 +231,18 @@ textarea { resize: vertical; min-height: 76px; }
 }
 .mic-btn.mic-active { background: var(--teal); box-shadow: 0 0 0 0 rgba(11,110,104,0.5); animation: mic-pulse 1.4s ease-out infinite; }
 .mic-btn.mic-active svg { stroke: #fff; }
+.mic-btn.mic-recording { background: var(--clay); box-shadow: 0 0 0 0 rgba(181,75,63,0.5); animation: mic-pulse-rec 1.2s ease-out infinite; }
+.mic-btn.mic-recording svg { stroke: #fff; }
+.mic-btn:disabled { opacity: 0.55; cursor: default; }
 @keyframes mic-pulse {
   0% { box-shadow: 0 0 0 0 rgba(11,110,104,0.45); }
   70% { box-shadow: 0 0 0 12px rgba(11,110,104,0); }
   100% { box-shadow: 0 0 0 0 rgba(11,110,104,0); }
+}
+@keyframes mic-pulse-rec {
+  0% { box-shadow: 0 0 0 0 rgba(181,75,63,0.45); }
+  70% { box-shadow: 0 0 0 12px rgba(181,75,63,0); }
+  100% { box-shadow: 0 0 0 0 rgba(181,75,63,0); }
 }
 
 .chat-log { flex: 1; overflow-y: auto; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; }
@@ -547,7 +555,7 @@ table.med-table td { padding: 9px 10px; border-bottom: 1px solid var(--line); fo
         <div class="chat-panel">
           <div class="chat-head">
             <span class="chat-head-title">Conversation</span>
-            <button class="mic-btn" id="micBtn" aria-label="Microphone status">
+            <button class="mic-btn" id="micBtn" aria-label="Record voice reply" onclick="toggleMic()">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal-dark)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 19v3"/></svg>
             </button>
           </div>
@@ -971,6 +979,7 @@ table.med-table td { padding: 9px 10px; border-bottom: 1px solid var(--line); fo
 </div>
 
 <div id="toastContainer"></div>
+<audio id="ttsPlayer" style="display:none;"></audio>
 
 <script>
 const svgNS = "http://www.w3.org/2000/svg";
@@ -1091,6 +1100,123 @@ async function callGroq(userText) {
   return JSON.parse(raw);
 }
 
+/* ---------- Voice input (Groq Whisper) ---------- */
+let mediaRecorder = null;
+let audioChunks = [];
+let isRecording = false;
+
+async function toggleMic() {
+  if (!interviewActive) {
+    showToast("Start the interview before using voice input.");
+    return;
+  }
+  if (isRecording) {
+    stopRecording();
+  } else {
+    startRecording();
+  }
+}
+
+async function startRecording() {
+  if (!navigator.mediaDevices || !window.MediaRecorder) {
+    showToast("Voice input isn't supported in this browser.");
+    return;
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = (e) => {
+      if (e.data.size > 0) audioChunks.push(e.data);
+    };
+    mediaRecorder.onstop = () => {
+      stream.getTracks().forEach((t) => t.stop());
+      handleRecordedAudio();
+    };
+    mediaRecorder.start();
+    isRecording = true;
+    document.getElementById("micBtn").classList.add("mic-recording");
+  } catch (err) {
+    console.error(err);
+    showToast("Microphone access was denied or unavailable.");
+  }
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state !== "inactive") {
+    mediaRecorder.stop();
+  }
+  isRecording = false;
+  document.getElementById("micBtn").classList.remove("mic-recording");
+}
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result.split(",")[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function handleRecordedAudio() {
+  if (!audioChunks.length) return;
+  const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || "audio/webm" });
+  const input = document.getElementById("chatTextInput");
+  const micBtn = document.getElementById("micBtn");
+  setInputEnabled(false);
+  micBtn.disabled = true;
+
+  try {
+    const base64 = await blobToBase64(blob);
+    const res = await fetch("/api/transcribe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ audio: base64, mimeType: blob.type })
+    });
+
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    const text = (data.text || "").trim();
+
+    micBtn.disabled = false;
+
+    if (!text) {
+      showToast("Didn't catch that — please try again or type your reply.");
+      setInputEnabled(true);
+      return;
+    }
+
+    input.value = text;
+    sendPatientMessage();
+  } catch (err) {
+    console.error(err);
+    micBtn.disabled = false;
+    showToast("Voice transcription failed — see console for details.");
+    setInputEnabled(true);
+  }
+}
+
+/* ---------- Voice output (Groq TTS) ---------- */
+async function speakReply(text) {
+  if (!text) return;
+  try {
+    const res = await fetch("/api/speak", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text })
+    });
+    if (!res.ok) return; // fail silently — the text reply is already shown
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const player = document.getElementById("ttsPlayer");
+    player.src = url;
+    player.play().catch(() => {}); // autoplay can be blocked until user interacts
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 function setInputEnabled(enabled) {
   document.getElementById("chatTextInput").disabled = !enabled;
   document.getElementById("sendBtn").disabled = !enabled;
@@ -1118,6 +1244,7 @@ async function sendPatientMessage() {
     if (result.red_flag) showFlagBanner();
 
     appendBubble("ai", result.reply);
+    speakReply(result.reply);
 
     if (result.interview_complete) {
       interviewActive = false;
@@ -1161,6 +1288,7 @@ function showFlagBanner() {
 }
 
 function resetInterview() {
+  if (isRecording) stopRecording();
   document.getElementById("chatLog").innerHTML = "";
   document.getElementById("flagBanner").classList.remove("flag-visible");
   document.querySelectorAll(".summary-body .field-value").forEach(el => {
